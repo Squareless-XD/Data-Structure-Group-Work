@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-using namespace std;
 
 #define TRUE 1
 #define FALSE 0
@@ -130,7 +129,7 @@ status strEmpty(lString str)
 status strCompare(lString str1, lString str2)
 {
     int strLen1 = strLength(str1), strLen2 = strLength(str2);
-    int minStrLen = min(strLen1, strLen2); // find the minimum to check whether it is right to focus on the shared length
+    int minStrLen = std::min(strLen1, strLen2); // find the minimum to check whether it is right to focus on the shared length
     int index = 1, cmpTemp;
     strNode *node1 = str1.head, *node2 = str2.head;
 
@@ -596,10 +595,10 @@ void strPrint(lString str)
     node = str.head;
     while (node != NULL)
     {
-        cout << node->chdata;
+        std::cout << node->chdata;
         node = node->next;
     }
-    cout << endl;
+    std::cout << std::endl;
 }
 
 void strPrintNoEndl(lString str)
@@ -610,7 +609,7 @@ void strPrintNoEndl(lString str)
     node = str.head;
     while (node != NULL)
     {
-        cout << node->chdata;
+        std::cout << node->chdata;
         node = node->next;
     }
 }

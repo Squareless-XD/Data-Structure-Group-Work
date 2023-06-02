@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-using namespace std;
 
 #define CHUNKSIZE 80 // tip: the length is fixed
 

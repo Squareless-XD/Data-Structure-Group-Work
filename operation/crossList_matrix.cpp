@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-using namespace std;
 
 #define maxArrayDim 8 // the maximun dimensions of the array
 
@@ -270,8 +269,8 @@ status sMatrixInput(crossList *mat, int row, int col)
     int i, j, sign, whetherEmpty;
     char c;
     matElemType temp;
-    vector<matElemType> matVec;
-    vector<matElemType>::iterator it;
+    std::vector<matElemType> matVec;
+    std::vector<matElemType>::iterator it;
 
     sMatrixInit(mat, row, col);
 
@@ -309,7 +308,7 @@ status sMatrixInput(crossList *mat, int row, int col)
     {
         for (j = 1; j <= col; ++j)
         {
-            cin >> temp;
+            std::cin >> temp;
             if (temp == 1)
                 sMatrixAssign(mat, *(it++), i, j);
         }
@@ -342,17 +341,17 @@ status sMatrixPrint(crossList mat)
             printZero(matNode->colIndex - colIndexTemp - 1);
             colIndexTemp = matNode->colIndex;
             if (colIndexTemp != col)
-                cout << matNode->elem << ' ';
+                std::cout << matNode->elem << ' ';
             else
-                cout << matNode->elem;
+                std::cout << matNode->elem;
             matNode = matNode->right;
         }
         if (colIndexTemp != col)
         {
             printZero(col - colIndexTemp - 1);
-            cout << '0';
+            std::cout << '0';
         }
-        cout << endl;
+        std::cout << std::endl;
     }
 
     return OK;
@@ -379,17 +378,17 @@ status sMatrixPrintBin(crossList mat)
             printZero(matNode->colIndex - colIndexTemp - 1);
             colIndexTemp = matNode->colIndex;
             if (colIndexTemp != col)
-                cout << '1' << ' ';
+                std::cout << '1' << ' ';
             else
-                cout << '1';
+                std::cout << '1';
             matNode = matNode->right;
         }
         if (colIndexTemp != col)
         {
             printZero(col - colIndexTemp - 1);
-            cout << '0';
+            std::cout << '0';
         }
-        cout << endl;
+        std::cout << std::endl;
     }
 
     return OK;
@@ -408,14 +407,14 @@ status sMatrixPrintVec(crossList mat)
         while (matNode != NULL)
         {
             if (firstPrtSign == FALSE)
-                cout << ' ';
+                std::cout << ' ';
             else
                 firstPrtSign = FALSE;
-            cout << matNode->elem;
+            std::cout << matNode->elem;
             matNode = matNode->right;
         }
     }
-    cout << endl;
+    std::cout << std::endl;
 
     return OK;
 }
@@ -425,7 +424,7 @@ status printZero(int count)
     if (count <= 0)
         return OK;
     while (count--)
-        cout << "0 ";
+        std::cout << "0 ";
 
     return OK;
 }

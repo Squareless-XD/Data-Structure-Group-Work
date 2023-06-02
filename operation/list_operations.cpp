@@ -13,7 +13,7 @@ struct LNode
 typedef struct LNode listnode;
 
 // create a new List node using the data called "data"
-int *create_list_node(listnode **pheader, ElemType data)
+int create_list_node(listnode **pheader, ElemType data)
 {
     if (list_malloc(pheader) == -1) // assign the memory needed for the node, and judge whether something wrong happened.
         return -1;
@@ -194,7 +194,7 @@ int list_prev_node(listnode *header, listnode *node, listnode **pprev)
 int list_insert_after(listnode *node, ElemType data)
 {
     listnode *new_node;
-    if (create_list_node(new_node, data) == -1)
+    if (create_list_node(&new_node, data) == -1)
     {
         printf("Insert failed: cannot create new node\n");
         return -1;
@@ -216,7 +216,7 @@ int list_insert_before(listnode **pheader, listnode *node, ElemType data)
     }
     if (prev_judge == -2)
     {
-        if (create_list_node(new_node, data) == -1)
+        if (create_list_node(&new_node, data) == -1)
         {
             printf("Insert failed: cannot create new node\n");
             return -1;

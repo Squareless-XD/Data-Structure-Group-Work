@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
 #include <vector>
-using namespace std;
 
 #define TRUE 1
 #define FALSE 0
@@ -338,7 +337,7 @@ status gListPrint(genList *glist)
     }
     else if (glist->tag == ATOM)
     {
-        cout << glist->atom;
+        std::cout << glist->atom;
     }
     else if (glist->tag == LIST)
     {

@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-using namespace std;
 
 #define STACK_INIT_SIZE 100 // 存储空间初始分配量 单位：stackElemType
 #define STACK_INCREMENT 10  // 存储空间分配增量
@@ -270,7 +269,7 @@ int biTreeDepth(biTNode *biTree)
 {
     if (biTree == NULL)
         return 0;
-    return max(biTreeDepth(biTree->lchild), biTreeDepth(biTree->rchild)) + 1;
+    return std::max(biTreeDepth(biTree->lchild), biTreeDepth(biTree->rchild)) + 1;
 }
 
 status biTreeFindElem(biTNode *biTree, biTElemType elemFind, biTNode **firstNode)

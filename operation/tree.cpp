@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-using namespace std;
 
 #define treeElemType int
 
@@ -95,7 +94,7 @@ int treeDepth(treeNode *root)
         return 0;
     while (p)
     {
-        depth = max(0, treeDepth(p) + 1);
+        depth = std::max(0, treeDepth(p) + 1);
         p = p->nextSibling;
     }
     return depth;
@@ -107,46 +106,46 @@ treeNode *getRoot(treeData *tree)
     return tree->root;
 }
 
-// put a new element into the queue
-status enqueue(linkedQueue *queue, queueElemType elem)
-{
-    queueNode *newNode;
-    newNode = (queueNode *)malloc(sizeof(queueNode));
-    if (!newNode)
-        return ERROR;
-    newNode->data = elem;
-    newNode->next = NULL;
-    queue->rear->next = newNode;
-    queue->rear = newNode;
-    return OK;
-}
+// // put a new element into the queue
+// status enqueue(linkedQueue *queue, queueElemType elem)
+// {
+//     queueNode *newNode;
+//     newNode = (queueNode *)malloc(sizeof(queueNode));
+//     if (!newNode)
+//         return ERROR;
+//     newNode->data = elem;
+//     newNode->next = NULL;
+//     queue->rear->next = newNode;
+//     queue->rear = newNode;
+//     return OK;
+// }
 
-// take out the oldest element from the queue
-status dequeue(linkedQueue *queue, queueElemType *elem)
-{
-    queueNode *frontTemp;
-    if (queue->front == queue->rear)
-        return ERROR;
-    frontTemp = queue->front->next; // since this node contains the first element that is ever stored
-    *elem = frontTemp->data;
-    queue->front->next = frontTemp->next;
-    if (queue->rear == frontTemp)
-        queue->rear = queue->front;
-    free(frontTemp);
-    return OK;
-}
+// // take out the oldest element from the queue
+// status dequeue(linkedQueue *queue, queueElemType *elem)
+// {
+//     queueNode *frontTemp;
+//     if (queue->front == queue->rear)
+//         return ERROR;
+//     frontTemp = queue->front->next; // since this node contains the first element that is ever stored
+//     *elem = frontTemp->data;
+//     queue->front->next = frontTemp->next;
+//     if (queue->rear == frontTemp)
+//         queue->rear = queue->front;
+//     free(frontTemp);
+//     return OK;
+// }
 
-status queueTraverse(linkedQueue *queue, status (*visit)(queueNode *node))
-{
-    queueNode *p;
-    if (queue->front == queue->rear)
-        return ERROR;
-    p = queue->front->next;
-    while (p)
-    {
-        visit(p);
-        p = p->next;
-    }
-    return OK;
-}
+// status queueTraverse(linkedQueue *queue, status (*visit)(queueNode *node))
+// {
+//     queueNode *p;
+//     if (queue->front == queue->rear)
+//         return ERROR;
+//     p = queue->front->next;
+//     while (p)
+//     {
+//         visit(p);
+//         p = p->next;
+//     }
+//     return OK;
+// }
 

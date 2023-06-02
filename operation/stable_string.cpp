@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-using namespace std;
 
 #define MAXSTRLEN 255
 
@@ -62,7 +61,7 @@ status strCompare(sString str1, sString str2)
     if (str1 == str2)
         return 0;
     int strLen1 = strLength(str1), strLen2 = strLength(str2);
-    int minStrLen = min(strLen1, strLen2);
+    int minStrLen = std::min(strLen1, strLen2);
     int index = 1;
     while (minStrLen--)
     {

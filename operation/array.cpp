@@ -1,6 +1,4 @@
-
 #include <bits/stdc++.h>
-using namespace std;
 
 #define maxArrayDim 8 // the maximun dimensions of the array
 
@@ -155,7 +153,7 @@ status arrayInput(seqArray *array, int row, int col)
 
     for (i = 0; i < array->constants[0] * array->bounds[0]; ++i)
     {
-        cin >> temp;
+        std::cin >> temp;
         *(array->base + i) = temp;
     }
 
@@ -173,8 +171,8 @@ status arrayPrint_2Dim(seqArray *array)
     for (i = 0; i < row; ++i)
     {
         for (j = 0; j < col - 1; ++j)
-            cout << *(elem++) << ' ';
-        cout << *(elem++) << endl;
+            std::cout << *(elem++) << ' ';
+        std::cout << *(elem++) << std::endl;
     }
 
     return OK;
