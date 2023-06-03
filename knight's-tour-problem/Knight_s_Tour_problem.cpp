@@ -479,8 +479,5 @@ int main()
     // duration = timeElapsed(start, finish);
     printElapsedTime(start, stop);
 
-    // getchar();
-    // getchar();
-
     return 0;
 }
