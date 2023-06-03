@@ -118,12 +118,12 @@ int solveKTMain(int initial_row = 0, int initial_col = 0)
     int board[BOARD_SIZE][BOARD_SIZE];
     int row, col;
 
-    // Initialization of the board (solution matrix)
+    // initialization of the board (solution matrix)
     for (row = 0; row < BOARD_SIZE; row++)
         for (col = 0; col < BOARD_SIZE; col++)
             board[row][col] = EMPTY;
 
-    // Since the Knight is initially at the first block
+    // mark the initial position as visited
     board[initial_row][initial_col] = 0;
 
     // start from (initial_row, initial_col) and explore all tours using solveKTRecur()
@@ -142,17 +142,19 @@ int solveKTMain(int initial_row = 0, int initial_col = 0)
     return true;
 }
 
+// calculate the elapsed time
 static inline double timeElapsed(clock_t time_start, clock_t time_stop)
 {
     return (double)(time_stop - time_start) / CLOCKS_PER_SEC;
 }
 
+// print the elapsed time
 static inline void printElapsedTime(clock_t time_start, clock_t time_stop)
 {
     std::cout << "Time: " << timeElapsed(time_start, time_stop) << " seconds" << std::endl;
 }
 
-// Driver Code
+// main function, used to test the program
 int main()
 {
     double duration;
