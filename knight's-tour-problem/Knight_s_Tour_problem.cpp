@@ -177,7 +177,7 @@ void printTour(int board[BOARD_SIZE][BOARD_SIZE])
     }
 }
 
-void stackToTour(sqStack *stack, int tour[BOARD_SIZE_SQUARE][2])
+void stackToTour(sqStack *stack, std::vector<Cell> *tour)
 {
     int i = 0;
     stackElemType *p = stack->base;
@@ -185,8 +185,8 @@ void stackToTour(sqStack *stack, int tour[BOARD_SIZE_SQUARE][2])
     {
         if (p->degree == -1)
         {
-            tour[i][0] = p->row;
-            tour[i][1] = p->col;
+            (*tour)[i].row = p->row;
+            (*tour)[i].col = p->col;
             ++i;
         }
         ++p;
@@ -418,7 +418,7 @@ int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial
 }
 
 // initialize, call solveKTStack(), and print the solution
-int solveKTMainStack(sqStack *tourStack, int tour[BOARD_SIZE_SQUARE][2], bool continue_last, int initial_row = 0, int initial_col = 0)
+int solveKTMainStack(sqStack *tourStack, std::vector<Cell> *tour, bool continue_last, int initial_row = 0, int initial_col = 0)
 {
     int board[BOARD_SIZE][BOARD_SIZE]; // solution matrix
     int row, col;
@@ -454,15 +454,15 @@ int solveKTMainStack(sqStack *tourStack, int tour[BOARD_SIZE_SQUARE][2], bool co
     // start from (initial_row, initial_col) and explore all tours using solveKTRecur()
     if (solveKTStack(board, initial_row, initial_col, tourStack, continue_last) == true)
     {
-        // std::cout << "Solution exists for (" << initial_row << ", " << initial_col << "):" << std::endl;
-        // printTour(board);
-        // stackToTour(tourStack, tour);
-        // for (int i = 0; i < BOARD_SIZE_SQUARE; ++i)
-        // {
-        //     std::cout << "(" << tour[i][0] << ", " << tour[i][1] << ") ";
-        //     if ((i + 1) % 8 == 0)
-        //         std::cout << std::endl;
-        // }
+        std::cout << "Solution exists for (" << initial_row << ", " << initial_col << "):" << std::endl;
+        printTour(board);
+        stackToTour(tourStack, tour);
+        for (int i = 0; i < BOARD_SIZE_SQUARE; ++i)
+        {
+            std::cout << "(" << (*tour)[i].row << ", " << (*tour)[i].col << ") ";
+            if ((i + 1) % 8 == 0)
+                std::cout << std::endl;
+        }
         return true;
     }
     // std::cout << "Solution does not exist" << std::endl;
@@ -484,11 +484,13 @@ void printElapsedTime(clock_t time_start, clock_t time_stop)
 // main function, used to test the program
 int main()
 {
-    int tour[BOARD_SIZE_SQUARE][2]; // record the tour of the Knight by tuple (row, col)
+    std::vector<Cell> tour; // record the tour of the Knight by tuple (row, col)
     double duration;
     sqStack *tourStack; // record the tour of the Knight by stack
     clock_t start, stop;
     int initial_row, initial_col;
+
+    tour.resize(BOARD_SIZE_SQUARE);
 
     // user's control of the initial position of the Knight
     std::cin >> initial_row >> initial_col;
@@ -511,9 +513,9 @@ int main()
     // solve the Knight Tour problem for a specific starting position controlled by the user
     // solveKTMainRec(initial_row, initial_col);
     int sum = 1;
-    solveKTMainStack(tourStack, tour, false, initial_row, initial_col);
+    solveKTMainStack(tourStack, &tour, false, initial_row, initial_col);
     std::cout << "Number of paths: " << std::setw(4) << sum << "  while_count: " << std::setw(10) << while_count << std::endl;
-    while (solveKTMainStack(tourStack, tour, true, initial_row, initial_col) == true)
+    while (solveKTMainStack(tourStack, &tour, true, initial_row, initial_col) == true)
     {
         ++sum;
         std::cout << "Number of paths: " << std::setw(4) << sum << "  while_count: " << std::setw(10) << while_count << std::endl;
