@@ -143,9 +143,10 @@ status stackTraverse(sqStack *stack, status (*visit)(stackElemType *e))
 // function prototypes for Knight Tour problem
 bool compareDegreeAsc(Cell a, Cell b);
 bool compareDegreeDes(Cell a, Cell b);
-void printTour(int board[BOARD_SIZE][BOARD_SIZE]);
-bool isValid(int board[BOARD_SIZE][BOARD_SIZE], int row, int col);
-int getDegree(int board[BOARD_SIZE][BOARD_SIZE], int row, int col);
+void printTour(const int board[BOARD_SIZE][BOARD_SIZE]);
+bool inBoard(const int board[BOARD_SIZE][BOARD_SIZE], int row, int col);
+bool isValid(const int board[BOARD_SIZE][BOARD_SIZE], int row, int col);
+int getDegree(const int board[BOARD_SIZE][BOARD_SIZE], int row, int col);
 int solveKTRecur(int board[BOARD_SIZE][BOARD_SIZE], int row, int col, int moveNum);
 int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int row, int col, int moveNum);
 int solveKTMain(int initial_row, int initial_col);
@@ -166,7 +167,7 @@ bool compareDegreeDes(Cell a, Cell b)
 
 // print solution matrix board[BOARD_SIZE][BOARD_SIZE].
 // here, each number means the order of the cell visited by the Knight
-void printTour(int board[BOARD_SIZE][BOARD_SIZE])
+void printTour(const int board[BOARD_SIZE][BOARD_SIZE])
 {
     int row, col;
     for (row = 0; row < BOARD_SIZE; row++)
@@ -194,18 +195,18 @@ void stackToTour(sqStack *stack, std::vector<Cell> *tour)
 }
 
 // check if (row,col) in a provided BOARD_SIZE^2 chessboard is empty
-bool inBoard(int board[BOARD_SIZE][BOARD_SIZE], int row, int col)
+bool inBoard(const int board[BOARD_SIZE][BOARD_SIZE], int row, int col)
 {
     return (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE);
 }
 
 // check if (row,col) in a provided BOARD_SIZE^2 chessboard is empty
-bool isValid(int board[BOARD_SIZE][BOARD_SIZE], int row, int col)
+bool isValid(const int board[BOARD_SIZE][BOARD_SIZE], int row, int col)
 {
     return (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE && board[row][col] == EMPTY);
 }
 
-int getDegree(int board[BOARD_SIZE][BOARD_SIZE], int row, int col)
+int getDegree(const int board[BOARD_SIZE][BOARD_SIZE], int row, int col)
 {
     int count = 0, i;
     if (!isValid(board, row, col))
@@ -317,7 +318,7 @@ int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial
     int k, k_offset;           // used for iteration over all possible moves
     int start;                 // starting index of the next move of the Knight
     int row, col;              // current coordinate of the Knight
-    int next_row, next_col;    // next move of the Knight
+    // int next_row, next_col;    // next move of the Knight
     int moveNum;               // current move number of the Knight. begin with 0
 
     // Attention: the stack is initialized in the main function, not here.
@@ -341,6 +342,7 @@ int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial
     else if (getTop_Sq(tourStack, &pathHead) == OK && pathHead.degree == -1)
     {
         pop_Sq(tourStack, &pathHead);
+        board[pathHead.row][pathHead.col] = EMPTY;
     }
     else
     {
@@ -355,6 +357,7 @@ int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial
         pop_Sq(tourStack, &pathHead);
         moveNum = pathHead.degree + 1;
 
+        // for printing the progress of the program. can be commented out.
         while_count++;
         if (while_count % 100000000 == 0)
             std::cout << "while_count: " << while_count << std::endl;
@@ -378,21 +381,31 @@ int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial
         row = pathHead.row;
         col = pathHead.col;
         board[row][col] = pathHead.degree;
-        // modify degree into meaning 2, and push the current coordinate of the Knight back into the stack
-        pathHead.degree = -1;
-        push_Sq(tourStack, pathHead);
 
         // randomize the starting index of the next move of the Knight
         start = rand() % DIRECTIONS;
 
         // get the next move of the Knight
-        for (int k = 0; k < DIRECTIONS; ++k)
+        for (k = 0; k < DIRECTIONS; ++k)
         {
             k_offset = (start + k) % DIRECTIONS;
+            // k_offset = k;
             next_seq[k].row = row + RowMove[k_offset];
             next_seq[k].col = col + ColMove[k_offset];
             next_seq[k].degree = getDegree(board, next_seq[k].row, next_seq[k].col);
+            if (next_seq[k].degree == 0 && moveNum != BOARD_SIZE_SQUARE - 1)
+                break;
         }
+        // if the degree of one position is 0, then it means this position is not accessible, so we won't consider the following positions.
+        // note that the degree of the last position of the Knight is 0, but it is accessible.
+        if (k != DIRECTIONS)
+        {
+            board[row][col] = EMPTY;
+            continue;
+        }
+        // modify degree into meaning 2, and push the current coordinate of the Knight back into the stack
+        pathHead.degree = -1;
+        push_Sq(tourStack, pathHead);
 
         // sort the next move of the Knight by the degree of the next move.
         // for stack is LIFO, we sort the next move of the Knight in descending order (from large to small)
@@ -454,14 +467,17 @@ int solveKTMainStack(sqStack *tourStack, std::vector<Cell> *tour, bool continue_
     // start from (initial_row, initial_col) and explore all tours using solveKTRecur()
     if (solveKTStack(board, initial_row, initial_col, tourStack, continue_last) == true)
     {
-        std::cout << "Solution exists for (" << initial_row << ", " << initial_col << "):" << std::endl;
-        printTour(board);
-        stackToTour(tourStack, tour);
-        for (int i = 0; i < BOARD_SIZE_SQUARE; ++i)
+        if (while_count % 500000 == 0)
         {
-            std::cout << "(" << (*tour)[i].row << ", " << (*tour)[i].col << ") ";
-            if ((i + 1) % 8 == 0)
-                std::cout << std::endl;
+            std::cout << "Solution exists for (" << initial_row << ", " << initial_col << "):" << std::endl;
+            printTour(board);
+            stackToTour(tourStack, tour);
+            for (int i = 0; i < BOARD_SIZE_SQUARE; ++i)
+            {
+                std::cout << "(" << (*tour)[i].row << ", " << (*tour)[i].col << ") ";
+                if ((i + 1) % 8 == 0)
+                    std::cout << std::endl;
+            }
         }
         return true;
     }
@@ -518,9 +534,10 @@ int main()
     while (solveKTMainStack(tourStack, &tour, true, initial_row, initial_col) == true)
     {
         ++sum;
-        std::cout << "Number of paths: " << std::setw(4) << sum << "  while_count: " << std::setw(10) << while_count << std::endl;
-        // if (sum % 10 == 0)
-        //     std::cout << "sum: " << sum << std::endl;
+        if (sum % 100000 == 0)
+            std::cout << "Number of paths: " << std::setw(4) << sum << "  while_count: " << std::setw(10) << while_count << std::endl;
+        // if (sum % 10000 == 0)
+        //     std::cout << std::endl;
     }
     std::cout << "sum: " << sum << std::endl;
 
