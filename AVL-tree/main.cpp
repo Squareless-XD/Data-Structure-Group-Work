@@ -1,117 +1,111 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
-#include <stdlib.h>
-#include "AVLTree.h"
+#include<stdio.h>
+#include<stdlib.h>
+#include"AVLTree.h"
+
 
 int main()
 {
-	AVLTree *T1;
-	AVLTree *T2;
+	AVLTree T1;
+	AVLTree T2;
 	int t;
 	int cho;
 	int key;
-	bool taller = 0;
-	bool shorter = 0;
-	T1 = (AVLTree *)malloc(sizeof(AVLTree));
+	bool taller =0;
+	bool shorter=0;
+	T1 = (AVLTree)malloc(sizeof(AVLTreeNode));
 	T1 = NULL;
-	T2 = (AVLTree *)malloc(sizeof(AVLTree));
+	T2 = (AVLTree)malloc(sizeof(AVLTreeNode));
 	T2 = NULL;
 	while (1)
 	{
-		printf("**********Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½**********\n");
-		printf("*******Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½*******\n");
+		printf("**********Æ½ºâ¶þ²æÊ÷µÄ²Ù×÷**********\n");
+		printf("*******Æ½ºâ¶þ²æÊ÷°¼Èë±íÏÔÊ¾Çø*******\n");
 		if (T1 == NULL)
-			printf("T1ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½\n");
-		else
-		{
+			printf("T1ÏÖÔÚÊÇ¿ÕÊ÷\n");
+		else {
 			printf("T1:\n");
 			PrintAVL(T1, 1);
 		}
 		if (T2 == NULL)
-			printf("T2ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½\n");
-		else
-		{
+			printf("T2ÏÖÔÚÊÇ¿ÕÊ÷\n");
+		else {
 			printf("T2:\n");
 			PrintAVL(T2, 1);
 		}
-
-		printf("\n**********ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ä²ï¿½ï¿½ï¿½**********\n");
-		printf("|               1.ï¿½ï¿½ï¿½ï¿½             |\n");
-		printf("|               2.ï¿½ï¿½ï¿½ï¿½             |\n");
-		printf("|               3.É¾ï¿½ï¿½             |\n");
-		printf("|               4.ï¿½Ï²ï¿½             |\n");
-		printf("|               5.ï¿½ï¿½ï¿½ï¿½             |\n");
-		printf("|               7.ï¿½Ë³ï¿½             |\n");
+			
+		printf("\n**********ÊäÈëÄãÏëÒªµÄ²Ù×÷**********\n");
+		printf("|               1.²éÕÒ             |\n");
+		printf("|               2.²åÈë             |\n");
+		printf("|               3.É¾³ý             |\n");
+		printf("|               4.ºÏ²¢             |\n");
+		printf("|               5.·ÖÁÑ             |\n");
+		printf("|               7.ÍË³ö             |\n");
 		printf("************************************\n");
-		printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½\n");
+		printf("ÊäÈëÄãÏëÒªµÄ²Ù×÷£º\n");
 		scanf("%d", &cho);
 		fflush(stdin);
-		switch (cho)
-		{
+		switch (cho) {
 		case 1:
-			printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½");
+			printf("ÇëÊäÈëÏëÒª²éÕÒµÄÊ÷£º");
 			scanf("%d", &t);
 			fflush(stdin);
-			printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ÒµÄ¹Ø¼ï¿½ï¿½Ö£ï¿½");
+			printf("ÇëÊäÈëÒª²éÕÒµÄ¹Ø¼ü×Ö£º");
 			scanf("%d", &key);
 			fflush(stdin);
 			if (t == 1)
 			{
 				if (SearchAVL(T1, key))
-					printf("ï¿½ï¿½ï¿½Ò³É¹ï¿½\n");
-				else
-					printf("ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½\n");
+				printf("²éÕÒ³É¹¦\n");
+			else
+				printf("²éÕÒÊ§°Ü\n");
 			}
 			else
 			{
 				if (SearchAVL(T2, key))
-					printf("ï¿½ï¿½ï¿½Ò³É¹ï¿½\n");
+					printf("²éÕÒ³É¹¦\n");
 				else
-					printf("ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½\n");
+					printf("²éÕÒÊ§°Ü\n");
 			}
 			break;
 		case 2:
-			printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
+			printf("ÇëÊäÈëÏëÒª²åÈëµÄÊ÷£º");
 			scanf("%d", &t);
 			fflush(stdin);
-			printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½");
+			printf("ÇëÊäÈëÒª²åÈëµÄÖµ£º");
 			scanf("%d", &key);
 			fflush(stdin);
-			if (t == 1)
-			{
+			if (t == 1) {
 				if (InsertAVL(T1, key, taller) == 1)
-					printf("ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Úµï¿½\n");
-				else
-					printf("ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½\n");
-			}
+				printf("³É¹¦²åÈëÁËÒ»¸ö½Úµã\n");
 			else
-			{
+				printf("²åÈëÊ§°Ü\n");
+			}
+			else {
 				if (InsertAVL(T2, key, taller) == 1)
-					printf("ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Úµï¿½\n");
+					printf("³É¹¦²åÈëÁËÒ»¸ö½Úµã\n");
 				else
-					printf("ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½\n");
+					printf("²åÈëÊ§°Ü\n");
 			}
 			break;
 		case 3:
-			printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
+			printf("ÇëÊäÈëÏëÒªÉ¾³ýµÄÊ÷£º");
 			scanf("%d", &t);
 			fflush(stdin);
-			printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÉ¾ï¿½ï¿½ï¿½Ä¹Ø¼ï¿½ï¿½Ö£ï¿½");
+			printf("ÇëÊäÈëÒªÉ¾³ýµÄ¹Ø¼ü×Ö£º");
 			scanf("%d", &key);
 			fflush(stdin);
-			if (t == 1)
-			{
-				if (DeleteAVL(T1, key, shorter))
-					printf("É¾ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½\n");
-				else
-					printf("É¾ï¿½ï¿½Ê§ï¿½Ü£ï¿½\n");
-			}
+			if (t == 1) {
+if (DeleteAVL(T1, key, shorter))
+				printf("É¾³ý³É¹¦£¡\n");
 			else
-			{
+				printf("É¾³ýÊ§°Ü£¡\n");
+			}
+			else {
 				if (DeleteAVL(T2, key, shorter))
-					printf("É¾ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½\n");
+					printf("É¾³ý³É¹¦£¡\n");
 				else
-					printf("É¾ï¿½ï¿½Ê§ï¿½Ü£ï¿½\n");
+					printf("É¾³ýÊ§°Ü£¡\n");
 			}
 			break;
 		case 4:
@@ -119,25 +113,23 @@ int main()
 			T2 = NULL;
 			break;
 		case 5:
-			printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ñµï¿½ï¿½ï¿½ï¿½ï¿½");
+			printf("ÇëÊäÈëÒª·ÖÁÑµÄÊ÷£º");
 			scanf("%d", &t);
 			fflush(stdin);
-			printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ñµï¿½ï¿½Ð¼ï¿½Öµï¿½ï¿½");
+			printf("ÇëÊäÈëÒª·ÖÁÑµÄÖÐ¼äÖµ£º");
 			scanf("%d", &key);
 			fflush(stdin);
-			if (t == 1)
-			{
+			if (t == 1) {
 				Split(T1, key, T1, T2);
 			}
-			else
-			{
+			else {
 				Split(T2, key, T1, T2);
 			}
 			break;
 		case 7:
 			return 0;
 		}
-		printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n");
+		printf("°´ÈÎÒâ¼ü·µ»Ø\n");
 		getchar();
 	}
 }

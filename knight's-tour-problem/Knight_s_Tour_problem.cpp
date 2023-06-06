@@ -196,6 +196,12 @@ void stackToTour(sqStack *stack, int tour[BOARD_SIZE_SQUARE][2])
 }
 
 // check if (row,col) in a provided BOARD_SIZE^2 chessboard is empty
+bool inBoard(int board[BOARD_SIZE][BOARD_SIZE], int row, int col)
+{
+    return (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE);
+}
+
+// check if (row,col) in a provided BOARD_SIZE^2 chessboard is empty
 bool isValid(int board[BOARD_SIZE][BOARD_SIZE], int row, int col)
 {
     return (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE && board[row][col] == EMPTY);
@@ -263,8 +269,48 @@ int solveKTRecur(int board[BOARD_SIZE][BOARD_SIZE], int row, int col, int moveNu
     return false;
 }
 
+/*
+    This function is based on the recursive function solveKTRecur().
+
+    Though the problem might have multiple solutions, this function prints one of the feasible solutions.
+    If any solution exists, return true and prints the tour.
+    If there is no feasible solution, then it prints "Solution does not exist".
+    Actually, the function can be modified to print all solutions by using backtracking.
+
+    This function use two initial position as input, with (0,0) as default values.
+    For using other initial position, just change the default values of initial_row and initial_col.
+*/
+int solveKTMainRec(int initial_row = 0, int initial_col = 0)
+{
+    int board[BOARD_SIZE][BOARD_SIZE]; // solution matrix
+    int row, col;
+
+    // initialization of the board (solution matrix)
+    for (row = 0; row < BOARD_SIZE; row++)
+        for (col = 0; col < BOARD_SIZE; col++)
+            board[row][col] = EMPTY;
+
+    // mark the initial position as visited (for recursion)
+    board[initial_row][initial_col] = 0;
+
+    // start from (initial_row, initial_col) and explore all tours using solveKTRecur()
+    if (solveKTRecur(board, initial_row, initial_col, 1) == false)
+    {
+        std::cout << "Solution does not exist" << std::endl;
+        return false;
+    }
+    else
+    {
+        std::cout << "Solution exists for (" << initial_row << ", " << initial_col << "):" << std::endl;
+        printTour(board);
+        std::cout << std::endl;
+    }
+
+    return true;
+}
+
 // A recursive utility function to solve Knight Tour problem
-int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial_col, sqStack *tourStack)
+int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial_col, sqStack *tourStack, bool continue_last)
 {
     Cell next_seq[DIRECTIONS]; // sort the next move of the Knight
     stackElemType pathHead;    // used for recording the top element of the stack
@@ -281,15 +327,26 @@ int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial
     // 2. the move number of the Knight at current position. begin with 0.
     // 3. if it appears to be -1, then it means that all next moves is not valid. then we pop the it and try other moves.
 
-    // check if the initial position is valid
-    if (!isValid(board, initial_row, initial_col))
-        return false;
+    // the legality of the initial position is checked in the function calling this function
 
     // initialization of the stack, and push the initial position into the stack
-    pathHead.row = initial_row;
-    pathHead.col = initial_col;
-    pathHead.degree = 0;
-    push_Sq(tourStack, pathHead);
+    if (continue_last == false)
+    {
+        pathHead.row = initial_row;
+        pathHead.col = initial_col;
+        pathHead.degree = 0;
+        push_Sq(tourStack, pathHead);
+    }
+    // default: continue the last tour, where the top element of the stack is the last position of the Knight, with degree==-1
+    else if (getTop_Sq(tourStack, &pathHead) == OK && pathHead.degree == -1)
+    {
+        pop_Sq(tourStack, &pathHead);
+    }
+    else
+    {
+        std::cout << "Error: continue_last is true, but the top element of the stack is not the last position of the Knight." << std::endl;
+        return false;
+    }
 
     // use a while loop to explore all possible tours of the Knight, until the stack is empty
     while (stackEmpty_Sq(tourStack) == false)
@@ -351,56 +408,23 @@ int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial
         }
     }
 
+    // if the stack is empty, then return false
+    std::cout << "Error: No tour is found" << std::endl;
     return false;
 }
 
-/*
-    This function is based on the recursive function solveKTRecur().
-
-    Though the problem might have multiple solutions, this function prints one of the feasible solutions.
-    If any solution exists, return true and prints the tour.
-    If there is no feasible solution, then it prints "Solution does not exist".
-    Actually, the function can be modified to print all solutions by using backtracking.
-
-    This function use two initial position as input, with (0,0) as default values.
-    For using other initial position, just change the default values of initial_row and initial_col.
-*/
-int solveKTMainRec(int initial_row = 0, int initial_col = 0)
+// initialize, call solveKTStack(), and print the solution
+int solveKTMainStack(sqStack *tourStack, int tour[BOARD_SIZE_SQUARE][2], bool continue_last, int initial_row = 0, int initial_col = 0)
 {
     int board[BOARD_SIZE][BOARD_SIZE]; // solution matrix
-    int row, col;
-
-    // initialization of the board (solution matrix)
-    for (row = 0; row < BOARD_SIZE; row++)
-        for (col = 0; col < BOARD_SIZE; col++)
-            board[row][col] = EMPTY;
-
-    // mark the initial position as visited (for recursion)
-    board[initial_row][initial_col] = 0;
-
-    // start from (initial_row, initial_col) and explore all tours using solveKTRecur()
-    if (solveKTRecur(board, initial_row, initial_col, 1) == false)
-    {
-        std::cout << "Solution does not exist" << std::endl;
-        return false;
-    }
-    else
-    {
-        std::cout << "Solution exists for (" << initial_row << ", " << initial_col << "):" << std::endl;
-        printTour(board);
-        std::cout << std::endl;
-    }
-
-    return true;
-}
-
-int solveKTMainStack(sqStack *tourStack, int initial_row = 0, int initial_col = 0)
-{
-    int board[BOARD_SIZE][BOARD_SIZE]; // solution matrix
-    int tour[BOARD_SIZE_SQUARE][2];    // record the tour of the Knight by tuple (row, col)
     int row, col;
 
     // Attention: the stack is initialized in the main function, not here.
+    //             the path is passed by the main function, not here.
+
+    // check the legality of the initial position
+    if (!inBoard(board, initial_row, initial_col))
+        return false;
 
     // initialization of the board (solution matrix)
     for (row = 0; row < BOARD_SIZE; row++)
@@ -408,12 +432,7 @@ int solveKTMainStack(sqStack *tourStack, int initial_row = 0, int initial_col = 
             board[row][col] = EMPTY;
 
     // start from (initial_row, initial_col) and explore all tours using solveKTRecur()
-    if (solveKTStack(board, initial_row, initial_col, tourStack) == false)
-    {
-        std::cout << "Solution does not exist" << std::endl;
-        return false;
-    }
-    else
+    if (solveKTStack(board, initial_row, initial_col, tourStack, continue_last) == true)
     {
         std::cout << "Solution exists for (" << initial_row << ", " << initial_col << "):" << std::endl;
         printTour(board);
@@ -425,18 +444,23 @@ int solveKTMainStack(sqStack *tourStack, int initial_row = 0, int initial_col = 
                 std::cout << std::endl;
         }
     }
+    else
+    {
+        std::cout << "Solution does not exist" << std::endl;
+        return false;
+    }
 
     return true;
 }
 
 // calculate the elapsed time
-static inline double timeElapsed(clock_t time_start, clock_t time_stop)
+double timeElapsed(clock_t time_start, clock_t time_stop)
 {
     return (double)(time_stop - time_start) / CLOCKS_PER_SEC;
 }
 
 // print the elapsed time
-static inline void printElapsedTime(clock_t time_start, clock_t time_stop)
+void printElapsedTime(clock_t time_start, clock_t time_stop)
 {
     std::cout << "Time: " << timeElapsed(time_start, time_stop) << " seconds" << std::endl;
 }
@@ -444,8 +468,9 @@ static inline void printElapsedTime(clock_t time_start, clock_t time_stop)
 // main function, used to test the program
 int main()
 {
-    sqStack *tourStack; // record the tour of the Knight by stack
+    int tour[BOARD_SIZE_SQUARE][2]; // record the tour of the Knight by tuple (row, col)
     double duration;
+    sqStack *tourStack; // record the tour of the Knight by stack
     clock_t start, stop;
     int initial_row, initial_col;
 
@@ -469,7 +494,7 @@ int main()
 
     // solve the Knight Tour problem for a specific starting position controlled by the user
     // solveKTMainRec(initial_row, initial_col);
-    solveKTMainStack(tourStack, initial_row, initial_col);
+    solveKTMainStack(tourStack, tour, true, initial_row, initial_col);
 
     // solve the Knight Tour problem for a specific starting position generated randomly
     // solveKTMainStack(rand() % BOARD_SIZE, rand() % BOARD_SIZE);

@@ -1,22 +1,23 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<stdlib.h>
 #define LH +1
 #define EH 0
 #define RH -1
-typedef struct AVLTree
-{
+#define true 1
+#define false 0
+typedef struct AVLTreeNode {
 	int data;
 	int depth;
-	int bf; // balance factor
-	struct AVLTree *lchild;
-	struct AVLTree *rchild;
-};
+	int bf; //balance factor
+	struct AVLTreeNode* lchild;
+	struct AVLTreeNode* rchild;
+}*AVLTree;
 
-// create a AVLTree which is empty;
-AVLTree *CreateAVLTree()
+//create a AVLTree which is empty;
+AVLTree CreateAVLTree()
 {
-	AVLTree *a;
-	a = (AVLTree *)malloc(sizeof(AVLTree));
+	AVLTree a;
+	a = (AVLTree)malloc(sizeof(AVLTreeNode));
 	a->bf = EH;
 	a->depth = 0;
 	a->data = 0;
@@ -25,39 +26,37 @@ AVLTree *CreateAVLTree()
 	return a;
 }
 
-void R_Rotate(AVLTree *p)
+void R_Rotate(AVLTree &p)
 {
-	AVLTree *lc;
-	lc = p->lchild;
+	AVLTree lc;
+	lc= p->lchild;
 	p->lchild = lc->rchild;
 	lc->rchild = p;
 	p = lc;
 }
 
-void L_Rotate(AVLTree *p)
+void L_Rotate(AVLTree &p)
 {
-	AVLTree *rc;
+	AVLTree rc;
 	rc = p->rchild;
 	p->rchild = rc->lchild;
 	rc->lchild = p;
 	p = rc;
 }
 
-void LeftBalance(AVLTree *T)
+void LeftBalance(AVLTree &T)
 {
-	AVLTree *lc;
-	AVLTree *rd;
+	AVLTree lc;
+	AVLTree rd;
 	lc = T->lchild;
-	switch (lc->bf)
-	{
+	switch (lc->bf) {
 	case LH:
-		T->bf = lc->bf = RH;
+		T->bf = lc->bf = EH;
 		R_Rotate(T);
 		break;
 	case RH:
 		rd = lc->rchild;
-		switch (rd->bf)
-		{
+		switch (rd->bf) {
 		case LH:
 			T->bf = RH;
 			lc->bf = EH;
@@ -77,21 +76,19 @@ void LeftBalance(AVLTree *T)
 	}
 }
 
-void RightBalance(AVLTree *T)
+void RightBalance(AVLTree &T)
 {
-	AVLTree *rc;
-	AVLTree *ld;
+	AVLTree rc;
+	AVLTree ld;
 	rc = T->rchild;
-	switch (rc->bf)
-	{
+	switch (rc->bf) {
 	case RH:
 		T->bf = rc->bf = EH;
 		L_Rotate(T);
 		break;
 	case LH:
 		ld = rc->lchild;
-		switch (ld->bf)
-		{
+		switch (ld->bf) {
 		case LH:
 			T->bf = EH;
 			rc->bf = RH;
@@ -110,11 +107,10 @@ void RightBalance(AVLTree *T)
 	}
 }
 
-bool InsertAVL(AVLTree *&T, int e, bool taller)
+bool InsertAVL(AVLTree &T, int e, bool &taller)
 {
-	if (T == NULL)
-	{
-		T = (AVLTree *)malloc(sizeof(AVLTree));
+	if (T == NULL) {
+		T = (AVLTree)malloc(sizeof(AVLTreeNode));
 		T->data = e;
 		T->bf = EH;
 		T->lchild = NULL;
@@ -128,11 +124,10 @@ bool InsertAVL(AVLTree *&T, int e, bool taller)
 	}
 	else if (e < T->data)
 	{
-		if (!InsertAVL(T->lchild, e, taller))
+		if (InsertAVL(T->lchild, e, taller)==false)
 			return 0;
-		if (taller)
-			switch (T->bf)
-			{
+		if(taller==true)
+			switch (T->bf) {
 			case LH:
 				LeftBalance(T);
 				taller = false;
@@ -147,13 +142,11 @@ bool InsertAVL(AVLTree *&T, int e, bool taller)
 				break;
 			}
 	}
-	else
-	{
-		if (!InsertAVL(T->rchild, e, taller))
-			return 0;
-		if (taller)
-			switch (T->bf)
-			{
+	else {
+		if (InsertAVL(T->rchild, e, taller)==false)
+			return false;
+		if(taller==true)
+			switch (T->bf) {
 			case LH:
 				T->bf = EH;
 				taller = false;
@@ -171,9 +164,9 @@ bool InsertAVL(AVLTree *&T, int e, bool taller)
 	return true;
 }
 
-AVLTree *SearchAVL(AVLTree *&T, int key)
+AVLTree SearchAVL(AVLTree &T, int key)
 {
-	if (T == NULL)
+	if (T==NULL)
 		return NULL;
 	else if (key == T->data)
 		return T;
@@ -183,38 +176,32 @@ AVLTree *SearchAVL(AVLTree *&T, int key)
 		return SearchAVL(T->rchild, key);
 }
 
-bool DeleteAVL(AVLTree *&T, int key, bool shorter)
+bool DeleteAVL(AVLTree &T, int key, bool &shorter)
 {
 	if (T == NULL)
 		return false;
-	if (T->data == key)
-	{
-		AVLTree *p;
-		if (T->lchild == NULL)
-		{
+	if (T->data == key) {
+		AVLTree p;
+		if (T->lchild == NULL) {
 			p = T;
 			T = T->rchild;
 			free(p);
 			shorter = true;
 		}
-		else if (T->rchild == NULL)
-		{
+		else if (T->rchild == NULL) {
 			p = T;
 			T = T->lchild;
 			free(p);
 			shorter = true;
 		}
-		else
-		{
+		else {
 			p = T->lchild;
 			while (p->rchild)
 				p = p->rchild;
 			T->data = p->data;
 			DeleteAVL(T->lchild, p->data, shorter);
-			if (shorter)
-			{
-				switch (T->bf)
-				{
+			if (shorter) {
+				switch (T->bf) {
 				case LH:
 					T->bf = EH;
 					shorter = true;
@@ -230,14 +217,11 @@ bool DeleteAVL(AVLTree *&T, int key, bool shorter)
 			}
 		}
 	}
-	else if (key < T->data)
-	{
+	else if (key < T->data) {
 		if (DeleteAVL(T->lchild, key, shorter))
 			return false;
-		if (shorter)
-		{
-			switch (T->bf)
-			{
+		if (shorter) {
+			switch (T->bf) {
 			case LH:
 				T->bf = EH;
 				shorter = true;
@@ -252,14 +236,11 @@ bool DeleteAVL(AVLTree *&T, int key, bool shorter)
 			}
 		}
 	}
-	else
-	{
+	else {
 		if (DeleteAVL(T->rchild, key, shorter))
 			return false;
-		if (shorter)
-		{
-			switch (T->bf)
-			{
+		if (shorter) {
+			switch (T->bf) {
 			case LH:
 				LeftBalance(T);
 				break;
@@ -277,11 +258,11 @@ bool DeleteAVL(AVLTree *&T, int key, bool shorter)
 	return true;
 }
 
-void PrintAVL(AVLTree *T, int lev)
+void PrintAVL(AVLTree &T, int lev)
 {
 	int i;
 	if (T->rchild)
-		PrintAVL(T->rchild, lev + 1);
+		PrintAVL(T->rchild,lev + 1);
 	for (i = 0; i < lev; i++)
 		printf("  ");
 	printf("%d\n", T->data);
@@ -289,9 +270,8 @@ void PrintAVL(AVLTree *T, int lev)
 		PrintAVL(T->lchild, lev + 1);
 }
 
-void MergeAVL(AVLTree *&T1, AVLTree *&T2)
-{
-	int taller = 0;
+void MergeAVL(AVLTree &T1, AVLTree &T2) {
+	bool taller = 0;
 	if (T2 == NULL)
 		return;
 	MergeAVL(T1, T2->lchild);
@@ -299,9 +279,9 @@ void MergeAVL(AVLTree *&T1, AVLTree *&T2)
 	MergeAVL(T1, T2->rchild);
 }
 
-void SplitAVL(AVLTree *&T, int key, AVLTree *&T1, AVLTree *&T2)
+void SplitAVL(AVLTree &T, int key, AVLTree &T1, AVLTree &T2)
 {
-	int taller = 0;
+	bool taller = 0;
 	if (T == NULL)
 		return;
 	SplitAVL(T->lchild, key, T1, T2);
@@ -312,8 +292,7 @@ void SplitAVL(AVLTree *&T, int key, AVLTree *&T1, AVLTree *&T2)
 	SplitAVL(T->rchild, key, T1, T2);
 }
 
-void DestroyAVL(AVLTree *&T)
-{
+void DestroyAVL(AVLTree &T) {
 	if (T == NULL)
 		return;
 	DestroyAVL(T->lchild);
@@ -321,13 +300,14 @@ void DestroyAVL(AVLTree *&T)
 	free(T);
 }
 
-void Split(AVLTree *&T, int key, AVLTree *&T1, AVLTree *&T2)
+void Split(AVLTree &T, int key, AVLTree &T1, AVLTree &T2)
 {
-	AVLTree *t1 = NULL;
-	AVLTree *t2 = NULL;
+	AVLTree t1=NULL;
+	AVLTree t2=NULL;
 	SplitAVL(T, key, t1, t2);
 	DestroyAVL(T1);
 	DestroyAVL(T2);
 	T1 = t1;
 	T2 = t2;
 }
+
