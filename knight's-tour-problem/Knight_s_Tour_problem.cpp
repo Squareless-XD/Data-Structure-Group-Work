@@ -183,14 +183,12 @@ void stackToTour(sqStack *stack, int tour[BOARD_SIZE_SQUARE][2])
     stackElemType *p = stack->base;
     while (p != stack->top)
     {
-        if (p->degree != -1)
+        if (p->degree == -1)
         {
-            ++p;
-            continue;
+            tour[i][0] = p->row;
+            tour[i][1] = p->col;
+            ++i;
         }
-        tour[i][0] = p->row;
-        tour[i][1] = p->col;
-        ++i;
         ++p;
     }
 }
@@ -309,6 +307,8 @@ int solveKTMainRec(int initial_row = 0, int initial_col = 0)
     return true;
 }
 
+unsigned long long int while_count = 0;
+
 // A recursive utility function to solve Knight Tour problem
 int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial_col, sqStack *tourStack, bool continue_last)
 {
@@ -354,6 +354,10 @@ int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial
         // get the top element of the stack
         pop_Sq(tourStack, &pathHead);
         moveNum = pathHead.degree + 1;
+
+        while_count++;
+        if (while_count % 100000000 == 0)
+            std::cout << "while_count: " << while_count << std::endl;
 
         // if any tour is finished, then modify degree into meaning 2, and push it back and return true
         if (moveNum == BOARD_SIZE_SQUARE)
@@ -427,30 +431,42 @@ int solveKTMainStack(sqStack *tourStack, int tour[BOARD_SIZE_SQUARE][2], bool co
         return false;
 
     // initialization of the board (solution matrix)
-    for (row = 0; row < BOARD_SIZE; row++)
-        for (col = 0; col < BOARD_SIZE; col++)
-            board[row][col] = EMPTY;
-
-    // start from (initial_row, initial_col) and explore all tours using solveKTRecur()
-    if (solveKTStack(board, initial_row, initial_col, tourStack, continue_last) == true)
+    if (continue_last == false)
     {
-        std::cout << "Solution exists for (" << initial_row << ", " << initial_col << "):" << std::endl;
-        printTour(board);
-        stackToTour(tourStack, tour);
-        for (int i = 0; i < BOARD_SIZE_SQUARE; ++i)
-        {
-            std::cout << "(" << tour[i][0] << ", " << tour[i][1] << ") ";
-            if ((i + 1) % 8 == 0)
-                std::cout << std::endl;
-        }
+        for (row = 0; row < BOARD_SIZE; row++)
+            for (col = 0; col < BOARD_SIZE; col++)
+                board[row][col] = EMPTY;
     }
     else
     {
-        std::cout << "Solution does not exist" << std::endl;
-        return false;
+        stackElemType *p = tourStack->base;
+        int i = 0;
+        while (p != tourStack->top)
+        {
+            if (p->degree == -1)
+            {
+                board[p->row][p->col] = i;
+                ++i;
+            }
+            ++p;
+        }
     }
-
-    return true;
+    // start from (initial_row, initial_col) and explore all tours using solveKTRecur()
+    if (solveKTStack(board, initial_row, initial_col, tourStack, continue_last) == true)
+    {
+        // std::cout << "Solution exists for (" << initial_row << ", " << initial_col << "):" << std::endl;
+        // printTour(board);
+        // stackToTour(tourStack, tour);
+        // for (int i = 0; i < BOARD_SIZE_SQUARE; ++i)
+        // {
+        //     std::cout << "(" << tour[i][0] << ", " << tour[i][1] << ") ";
+        //     if ((i + 1) % 8 == 0)
+        //         std::cout << std::endl;
+        // }
+        return true;
+    }
+    // std::cout << "Solution does not exist" << std::endl;
+    return false;
 }
 
 // calculate the elapsed time
@@ -494,7 +510,17 @@ int main()
 
     // solve the Knight Tour problem for a specific starting position controlled by the user
     // solveKTMainRec(initial_row, initial_col);
-    solveKTMainStack(tourStack, tour, true, initial_row, initial_col);
+    int sum = 1;
+    solveKTMainStack(tourStack, tour, false, initial_row, initial_col);
+    std::cout << "Number of paths: " << std::setw(4) << sum << "  while_count: " << std::setw(10) << while_count << std::endl;
+    while (solveKTMainStack(tourStack, tour, true, initial_row, initial_col) == true)
+    {
+        ++sum;
+        std::cout << "Number of paths: " << std::setw(4) << sum << "  while_count: " << std::setw(10) << while_count << std::endl;
+        // if (sum % 10 == 0)
+        //     std::cout << "sum: " << sum << std::endl;
+    }
+    std::cout << "sum: " << sum << std::endl;
 
     // solve the Knight Tour problem for a specific starting position generated randomly
     // solveKTMainStack(rand() % BOARD_SIZE, rand() % BOARD_SIZE);
