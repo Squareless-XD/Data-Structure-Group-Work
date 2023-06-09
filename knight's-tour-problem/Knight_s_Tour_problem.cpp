@@ -322,7 +322,7 @@ void addBkTrackStack(sqStack *bkTrackStack, int row, int col, bool isForward)
 
 // A recursive utility function to solve Knight Tour problem
 // tourStack is used to record the tour of the Knight by stack, and bkTrackStack is used to record the backtracking of the Knight by stack
-// Attetion: tourStack should be given as used to be, if continue_last is false; else, tourStack should be clear.
+// Attention: tourStack should be given as used to be, if continue_last is false; else, tourStack should be clear.
 //           bkTrackStack should be clear.
 int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial_col, sqStack *tourStack, sqStack *bkTrackStack, bool continue_last)
 {
@@ -408,9 +408,6 @@ int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial
         col = tourHead.col;
         board[row][col] = tourHead.degree;
 
-        // add the current position into the backtracking stack, forwarding
-        addBkTrackStack(bkTrackStack, row, col, true);
-
         // randomize the starting index of the next move of the Knight
         start = rand() % DIRECTIONS;
 
@@ -430,15 +427,18 @@ int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial
         if (k != DIRECTIONS)
         {
             // add 0-degree position forwarding, and back track these 2 positions
-            addBkTrackStack(bkTrackStack, next_seq[k].row, next_seq[k].col, true);
-            addBkTrackStack(bkTrackStack, next_seq[k].row, next_seq[k].col, false);
-            addBkTrackStack(bkTrackStack, row, col, false);
+            // addBkTrackStack(bkTrackStack, next_seq[k].row, next_seq[k].col, true);
+            // addBkTrackStack(bkTrackStack, next_seq[k].row, next_seq[k].col, false);
+            // addBkTrackStack(bkTrackStack, row, col, false);
             board[row][col] = EMPTY;
             continue;
         }
         // modify degree into meaning 2, and push the current coordinate of the Knight back into the stack
         tourHead.degree = -1;
         push_Sq(tourStack, tourHead);
+
+        // add the current position into the backtracking stack, forwarding
+        addBkTrackStack(bkTrackStack, row, col, true);
 
         // sort the next move of the Knight by the degree of the next move.
         // for stack is LIFO, we sort the next move of the Knight in descending order (from large to small)
@@ -465,7 +465,7 @@ int solveKTStack(int board[BOARD_SIZE][BOARD_SIZE], int initial_row, int initial
 
 // initialize, call solveKTStack(), and print the solution
 // tourStack is used to record the tour of the Knight by stack, and bkTrackStack is used to record the backtracking of the Knight by stack
-// Attetion: tourStack should be given as used to be, if continue_last is false; else, tourStack should be clear.
+// Attention: tourStack should be given as used to be, if continue_last is false; else, tourStack should be clear.
 int solveKTMainStack(sqStack *tourStack, sqStack *bkTrackStack, std::vector<Cell> *tour, bool continue_last, int initial_row = 0, int initial_col = 0)
 {
     stackElemType *p = tourStack->base;
